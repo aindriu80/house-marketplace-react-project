@@ -32,7 +32,7 @@ function Signin() {
           />
           <div className="passwordInputDiv">
             <input
-              type={'showPassword' ? 'text' : 'password'}
+              type={showPassword ? 'text' : 'password'}
               className="passwordInput"
               placeholder="Password"
               id="password"
