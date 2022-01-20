@@ -39,13 +39,12 @@ function Category() {
         const listings = []
 
         querySnap.forEach((doc) => {
-          // console.log('this')
-          // console.log(doc.data())
           return listings.push({
             id: doc.id,
             data: doc.data(),
           })
         })
+
         setListings(listings)
         setLoading(false)
       } catch (error) {
@@ -55,8 +54,7 @@ function Category() {
     fetchListings()
   }, [params.categoryName])
   return (
-    <div>
-      <h3>Category</h3>
+    <div className="category">
       <header>
         <p className="pageHeader">
           {params.categoryName === 'rent'

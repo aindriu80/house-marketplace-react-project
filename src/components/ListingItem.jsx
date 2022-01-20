@@ -17,7 +17,7 @@ function ListingItem({ listing, id, onDelete }) {
         <div className="categoryListingDetails">
           <p className="categoryListingLocation">{listing.location}</p>
           <p className="categoryListingName">{listing.name}</p>
-          <p className="cateogryListingPrice">
+          <p className="categoryListingPrice">
             €
             {listing.offer
               ? listing.discountedPrice
