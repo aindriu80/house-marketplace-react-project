@@ -70,7 +70,7 @@ function CreateListing() {
 
     let geolocation = {}
     let location
-    console.log(address)
+    // console.log(address)
 
     if (geolocationEnabled) {
       const response = await fetch(
@@ -80,10 +80,10 @@ function CreateListing() {
         `https://api.geoapify.com/v1/geocode/search?text=${address}&apiKey=b270b7e412df4e39ae3ab35e9ee6905d`
       )
       const data = await response.json()
-      console.log(data)
+      // /${docRef.id}console.log(data)
 
       geolocation.lat = data.results[0]?.geometry.location.lat ?? 0
-      console.log(geolocation.lat)
+      // console.log(geolocation.lat)
       geolocation.lng = data.results[0]?.geometry.location.lng ?? 0
 
       location =
@@ -99,8 +99,7 @@ function CreateListing() {
     } else {
       geolocation.lat = latitude
       geolocation.lng = longitude
-      location = address
-      console.log(geolocation, location)
+      // console.log(geolocation, location)
     }
     // Store images in firebase
     const storeImage = async (image) => {
@@ -119,13 +118,13 @@ function CreateListing() {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            console.log('Upload is ' + progress + '% done')
+            // console.log('Upload is ' + progress + '% done')
             switch (snapshot.state) {
               case 'paused':
-                console.log('Upload is paused')
+                // console.log('Upload is paused')
                 break
               case 'running':
-                console.log('Upload is running')
+                // console.log('Upload is running')
                 break
               default:
                 // do nothing
@@ -161,9 +160,10 @@ function CreateListing() {
       timestamp: serverTimestamp(),
     }
 
+    formDataCopy.location = address
+
     delete formDataCopy.images
     delete formDataCopy.address
-    location && (formDataCopy.location = location)
     !formDataCopy.offer && delete formDataCopy.discountedPrice
 
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
