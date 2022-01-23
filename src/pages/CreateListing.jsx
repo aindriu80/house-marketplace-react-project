@@ -1,11 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from 'firebase/storage'
+import { db } from '../firebase.config'
+import { v4 as uuidv4 } from 'uuid'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Spinner from '../components/Spinner'
 
 function CreateListing() {
-  const [geolocationEnabled, seGeolocationEnabled] = useState(true)
+  const [geolocationEnabled, seGeolocationEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     type: 'rent',
@@ -61,16 +69,20 @@ function CreateListing() {
 
     let geolocation = {}
     let location
+    console.log(address)
 
     if (geolocationEnabled) {
       const response = await fetch(
         // `http://api.positionstack.com/v1/forward?access_key=${process.env.REACT_APP_MARKET_PLACE_API_KEY}&query=address`
         // `https://api.geoapify.com/v1/geocode/search=${address}&apiKey=${process.env.REACT_APP_MARKET_PLACE_API_KEY}`
-        `https://api.geoapify.com/v1/geocode/search${address}&apiKey=${process.env.REACT_APP_MARKET_PLACE_API_KEY}`
+        // `https://api.geoapify.com/v1/geocode/search=${address}&apiKey=b270b7e412df4e39ae3ab35e9ee6905d`
+        `https://api.geoapify.com/v1/geocode/search?text=${address}&apiKey=b270b7e412df4e39ae3ab35e9ee6905d`
       )
       const data = await response.json()
+      console.log(data)
 
       geolocation.lat = data.results[0]?.geometry.location.lat ?? 0
+      console.log(geolocation.lat)
       geolocation.lng = data.results[0]?.geometry.location.lng ?? 0
 
       location =
@@ -89,6 +101,59 @@ function CreateListing() {
       location = address
       console.log(geolocation, location)
     }
+    // Store images in firebase
+    const storeImage = async (image) => {
+      return new Promise((resolve, reject) => {
+        const storage = getStorage()
+        const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`
+
+        const storageRef = ref(storage, 'images/' + fileName)
+
+        const uploadTask = uploadBytesResumable(storageRef, image)
+
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            console.log('Upload is ' + progress + '% done')
+            switch (snapshot.state) {
+              case 'paused':
+                console.log('Upload is paused')
+                break
+              case 'running':
+                console.log('Upload is running')
+                break
+              default:
+                // do nothing
+                break
+            }
+          },
+          (error) => {
+            // A full list of error codes is available at
+            // https://firebase.google.com/docs/storage/web/handle-errors
+            reject(error)
+          },
+          () => {
+            // Upload completed successfully, now we can get the download URL
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              resolve(downloadURL)
+            })
+          }
+        )
+      })
+    }
+    const imgUrls = await Promise.all(
+      [...images].map((image) => storeImage(image))
+    ).catch(() => {
+      setLoading(false)
+      toast.error('Images not uploaded')
+      return
+    })
+
+    console.log(imgUrls)
     setLoading(false)
   }
   const onMutate = (e) => {
