@@ -14,6 +14,7 @@ import { toast } from 'react-toastify'
 import Spinner from '../components/Spinner'
 
 function CreateListing() {
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -70,7 +71,6 @@ function CreateListing() {
 
     let geolocation = {}
     let location
-    // console.log(address)
 
     if (geolocationEnabled) {
       const response = await fetch(
@@ -80,10 +80,8 @@ function CreateListing() {
         `https://api.geoapify.com/v1/geocode/search?text=${address}&apiKey=b270b7e412df4e39ae3ab35e9ee6905d`
       )
       const data = await response.json()
-      // /${docRef.id}console.log(data)
 
       geolocation.lat = data.results[0]?.geometry.location.lat ?? 0
-      // console.log(geolocation.lat)
       geolocation.lng = data.results[0]?.geometry.location.lng ?? 0
 
       location =
@@ -99,7 +97,6 @@ function CreateListing() {
     } else {
       geolocation.lat = latitude
       geolocation.lng = longitude
-      // console.log(geolocation, location)
     }
     // Store images in firebase
     const storeImage = async (image) => {
@@ -116,8 +113,8 @@ function CreateListing() {
           'state_changed',
           (snapshot) => {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            // const progress =
+            //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             // console.log('Upload is ' + progress + '% done')
             switch (snapshot.state) {
               case 'paused':

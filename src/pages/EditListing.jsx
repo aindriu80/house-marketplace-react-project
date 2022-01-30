@@ -14,6 +14,7 @@ import { toast } from 'react-toastify'
 import Spinner from '../components/Spinner'
 
 function EditListing() {
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
   const [listing, setListing] = useState(false)
@@ -142,8 +143,8 @@ function EditListing() {
           'state_changed',
           (snapshot) => {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            // const progress =
+            //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             // console.log('Upload is ' + progress + '% done')
             switch (snapshot.state) {
               case 'paused':
